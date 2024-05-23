@@ -73,7 +73,7 @@ def create_tasks_from_json(tasks: List[TaskCreate]):
 
     for task in tasks:
         cursor.execute(
-            "SELECT * FROM tasks WHERE style = ? AND srt_path = ?  AND srt_path = ?",
+            "SELECT * FROM tasks WHERE style = ? AND video_path = ?  AND srt_path = ?",
             (task["style"], task["video_path"], task["srt_path"]),
         )
         if cursor.fetchone() is None:
@@ -131,7 +131,6 @@ def get_next_task():
     raise HTTPException(status_code=404, detail="No pending tasks available")
 
 
-
 class TaskUpdate(BaseModel):
     status: TaskStatus
 
@@ -146,7 +145,9 @@ def update_task_status(task_id: int, task_update: TaskUpdate):
         conn.close()
         raise HTTPException(status_code=404, detail="Task not found")
 
-    cursor.execute("UPDATE tasks SET status = ? WHERE id = ?", (task_update.status, task_id))
+    cursor.execute(
+        "UPDATE tasks SET status = ? WHERE id = ?", (task_update.status, task_id)
+    )
     conn.commit()
     conn.close()
     return {

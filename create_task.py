@@ -72,7 +72,7 @@ def load_tasks_to_db(tasks):
 
     for task in tasks:
         cursor.execute(
-            "SELECT * FROM tasks WHERE style = ? AND srt_path = ?  AND srt_path = ?",
+            "SELECT * FROM tasks WHERE style = ? AND video_path = ?  AND srt_path = ?",
             (task["style"], task["video_path"], task["srt_path"]),
         )
         if cursor.fetchone() is None:

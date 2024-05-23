@@ -321,6 +321,12 @@ class Playlet:
         for video in video_files:
             os.remove(video)
 
+    def reported(self, server_url, id, status):
+        response = requests.post(
+            f"{server_url}/tasks/{id}/update", json={"status": status}
+        )
+        return response
+
     def client(self, server_url):
         if not server_url.startswith("http://") and not server_url.startswith(
             "https://"
@@ -362,6 +368,7 @@ class Playlet:
                         data = json.loads(result)
                         end_time = "00:00:00.000"
                         if os.path.exists(out_path):
+                            self.reported(server_url, task["id"], "已完成")
                             continue
                         # 先将所有解说转成声音
                         for k, v in enumerate(data):
@@ -423,17 +430,11 @@ class Playlet:
                             out_path,
                         )
                         # 任务完成后上报服务器
-                        requests.post(
-                            f"{server_url}/tasks/{task['id']}/update",
-                            json={"status": "已完成"},
-                        )
+                        self.reported(server_url, task["id"], "已完成")
                     except Exception as e:
                         print(f"Failed to process task {task['id']}: {e}")
                         # 处理失败后上报服务器
-                        requests.post(
-                            f"{server_url}/tasks/{task['id']}/update",
-                            json={"status": "异常"},
-                        )
+                        self.reported(server_url, task["id"], "异常")
                 else:
                     print("No pending tasks available. Sleeping for 10 seconds.")
                     time.sleep(10)  # 如果没有任务，休眠10秒
