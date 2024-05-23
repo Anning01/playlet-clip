@@ -28,10 +28,10 @@ class Config:
     # 音量
     volume = "+100%"
     # 蒙版高度
-    blur_height = 90
+    blur_height = 185
     # 蒙版位置
-    blur_y = 1250
+    blur_y = 1413
     # 字幕位置
-    MarginV = 88
+    MarginV = 65
     # 粒子特效目录
     lz_path = None
