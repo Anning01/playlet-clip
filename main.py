@@ -18,6 +18,7 @@ from char2voice import create_voice_srt_new2
 from chatgpt import Chat
 from conf import Config
 from mutagen.mp3 import MP3
+from random import sample
 
 
 class Playlet:
@@ -80,7 +81,7 @@ class Playlet:
 
                 start_time = start_time.replace(",", ".")
                 if not os.path.exists(f"{k}.mp4"):
-                    self.trim_video(Config.video_path, f"{k}.mp4", start_time, duration)
+                    self.trim_video(Config.video_path, f"{k}.mp4", start_time, duration, Config.lz_path)
                 if v["type"] == "解说":
                     self.process_video(
                         f"{k}.mp4", f"{k}.mp3", f"{k}.srt", f"out{k}.mp4"
@@ -205,8 +206,16 @@ class Playlet:
         except ValueError:
             return "Invalid time format"
 
+
+    def get_video(self, path):
+        list_ = []
+        for file_name in os.listdir(path):
+            if file_name == r'Thumbs.db': continue
+            list_.append(path + '/' + file_name)
+        return list_
+
     def trim_video(
-        self, input_path, output_path, start_time, duration, log_level="error"
+        self, input_path, output_path, start_time, duration, lz_path=None, log_level="error"
     ):
         """
         使用FFmpeg截取视频的指定时间段。
@@ -217,24 +226,44 @@ class Playlet:
         start_time (str): 开始时间，格式应为 "hh:mm:ss" 或 "ss"。
         duration (str): 截取的持续时间，格式同上。
         """
-        # 构建FFmpeg命令
-        command = [
-            "ffmpeg",
-            "-v",
-            log_level,  # 设置日志级别
-            "-i",
-            input_path,  # 输入文件
-            "-ss",
-            start_time,  # 开始时间
-            "-t",
-            duration,  # 持续时间
-            # '-c', 'copy',  # 使用相同的编码进行复制
-            "-ac",
-            str(2),
-            "-ar",
-            str(24000),
-            output_path,  # 输出文件
-        ]
+        if lz_path is None:
+            
+            # 构建FFmpeg命令
+            command = [
+                "ffmpeg",
+                "-v",
+                log_level,  # 设置日志级别
+                "-i",
+                input_path,  # 输入文件
+                "-ss",
+                start_time,  # 开始时间
+                "-t",
+                duration,  # 持续时间
+                # '-c', 'copy',  # 使用相同的编码进行复制
+                "-ac",
+                str(2),
+                "-ar",
+                str(24000),
+                output_path,  # 输出文件
+            ]
+        else:
+            fbl_lz1_path = os.path.join(sample(self.get_video(os.path.join(lz_path)), 1)[0])
+            # 构建FFmpeg命令
+            command = [
+                'ffmpeg',
+                "-v",
+                log_level,  # 设置日志级别
+                '-i', input_path,  # 输入文件
+                '-i', fbl_lz1_path,  # 输入文件
+                '-ss', start_time,  # 开始时间
+                '-t', duration,  # 持续时间
+                # '-c', 'copy',  # 使用相同的编码进行复制
+                "-filter_complex",
+                "[1:v]format=yuva444p,colorchannelmixer=aa=0.001[valpha];[0:v][valpha]overlay=(W-w):(H-h)",
+                "-ac", str(2), 
+                "-ar", str(24000),
+                output_path  # 输出文件
+            ]
 
         # 执行命令
         subprocess.run(command)
@@ -408,7 +437,7 @@ class Playlet:
                             start_time = start_time.replace(",", ".")
                             if not os.path.exists(f"{k}.mp4"):
                                 self.trim_video(
-                                    task["video_path"], f"{k}.mp4", start_time, duration
+                                    task["video_path"], f"{k}.mp4", start_time, duration, config["lz_path"]
                                 )
                             if v["type"] == "解说":
                                 self.process_video(

@@ -33,3 +33,5 @@ class Config:
     blur_y = 1250
     # 字幕位置
     MarginV = 88
+    # 粒子特效目录
+    lz_path = None

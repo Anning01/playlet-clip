@@ -171,6 +171,7 @@ def get_config():
         "voice": Config.voice,
         "rate": Config.rate,
         "volume": Config.volume,
+        "lz_path": Config.lz_path,
     }
     return config
 
