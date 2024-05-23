@@ -1,0 +1,5 @@
+openai
+moviepy
+edge_tts
+aiofiles
+mutagen
