@@ -359,7 +359,37 @@ styles:
 
 ---
 
-## 🔊 TTS 音色
+## 🔊 TTS 语音合成
+
+### 默认: Edge-TTS（云端）
+Docker 镜像默认使用 Edge-TTS，无需下载模型，开箱即用：
+- ✅ 零配置，启动快
+- ✅ 支持多语言和丰富音色
+- ⚠️ 需要网络连接
+
+### 可选: CosyVoice（本地）
+如需更自然的本地语音，可切换到 CosyVoice：
+
+**Docker 部署切换方法：**
+```yaml
+# 在 docker-compose.yml 中添加环境变量
+environment:
+  - PLAYLET__TTS__BACKEND=cosyvoice_local
+  - PLAYLET__TTS__MODEL_NAME=/app/pretrained_models/CosyVoice-300M-SFT
+```
+
+首次使用 CosyVoice 时会自动下载模型（约 1.5GB），请耐心等待。
+
+**本地开发切换方法：**
+```bash
+# 安装 CosyVoice
+./scripts/install_cosyvoice.sh
+source setup_cosyvoice_env.sh
+
+# 修改配置文件 config/config.yaml
+tts:
+  backend: cosyvoice_local
+```
 
 ### CosyVoice 预设音色
 - 中文女、中文男
@@ -367,9 +397,9 @@ styles:
 - 粤语女
 - 英文女、英文男
 
-### Edge-TTS
-- 支持更多语言和音色
-- 无需本地模型，但需要网络连接
+### Edge-TTS 音色
+- 支持 400+ 音色
+- 查看所有音色: `edge-tts --list-voices`
 
 ---
 
