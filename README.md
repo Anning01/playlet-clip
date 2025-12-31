@@ -70,33 +70,53 @@ git clone https://github.com/Anning01/playlet-clip.git
 cd playlet-clip
 ```
 
-#### 3. 配置环境变量
-
-```bash
-cp .env.example .env
-```
-
-编辑 `.env` 文件，填写必要配置：
-```env
-OPENAI_API_KEY=sk-your-api-key-here
-OPENAI_BASE_URL=https://api.openai.com/v1  # 可选，支持代理
-```
-
-#### 4. 启动服务
+#### 3. 启动服务
 
 ```bash
 cd docker
 
-# GPU 版本（推荐，需要 NVIDIA GPU）
-docker-compose up -d
-
-# CPU 版本（无需 GPU，但速度较慢）
+# CPU 版本（无需 GPU）
 docker-compose -f docker-compose.cpu.yml up -d
+
+# GPU 版本（需要 NVIDIA GPU）
+docker-compose up -d
 ```
+
+#### 4. 配置并使用
+
+1. 打开浏览器访问 Web 界面
+2. 进入「设置」页面，配置 API Key、Base URL 和模型名称
+3. 保存后即可开始使用
 
 #### 5. 访问
 
+**本地部署：**
 打开浏览器访问 http://localhost:7860
+
+**云服务器部署：**
+
+如果你在云服务器（如阿里云、腾讯云、AWS等）上部署，需要：
+
+1. **开放端口**：在云服务器安全组/防火墙中放行 `7860` 端口
+   - 阿里云：控制台 → 安全组 → 添加入方向规则 → 端口 7860
+   - 腾讯云：控制台 → 安全组 → 添加入站规则 → 端口 7860
+   - AWS：EC2 → Security Groups → Inbound rules → Add rule → Port 7860
+
+2. **访问地址**：使用服务器公网 IP 访问
+   ```
+   http://你的服务器公网IP:7860
+   ```
+
+3. **查看服务状态**：
+   ```bash
+   # 查看容器运行状态
+   docker ps
+
+   # 查看日志
+   docker logs -f playlet-clip
+   ```
+
+> ⚠️ **安全提示**：生产环境建议配置 Nginx 反向代理 + HTTPS，而不是直接暴露端口。
 
 ---
 

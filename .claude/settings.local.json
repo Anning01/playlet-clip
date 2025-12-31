@@ -9,7 +9,8 @@
       "Bash(uv run python:*)",
       "Bash(uv run ruff:*)",
       "Bash(chmod:*)",
-      "Bash(uv run pytest:*)"
+      "Bash(uv run pytest:*)",
+      "Bash(ls:*)"
     ]
   }
 }

@@ -1,7 +1,3 @@
-version: '3.8'
-
-# CPU-only version for systems without NVIDIA GPU
-
 services:
   playlet-clip:
     build:
@@ -12,8 +8,8 @@ services:
     ports:
       - "7860:7860"
     volumes:
-      # Configuration
-      - ../config:/app/config:ro
+      # Configuration (writable for UI settings)
+      - ../config:/app/config
       # Data directories
       - ../data/input:/app/data/input
       - ../data/output:/app/data/output
@@ -22,8 +18,8 @@ services:
       # Huggingface cache
       - hf-cache:/root/.cache/huggingface
     environment:
-      # OpenAI API configuration
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # OpenAI API configuration (optional, can be set in UI)
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - OPENAI_BASE_URL=${OPENAI_BASE_URL:-https://api.openai.com/v1}
       # Force CPU mode
       - PLAYLET__ASR__DEVICE=cpu
