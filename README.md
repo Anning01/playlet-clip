@@ -66,7 +66,7 @@ sudo usermod -aG docker $USER
 #### 2. 克隆项目
 
 ```bash
-git clone https://github.com/anningforchina/playlet-clip.git
+git clone https://github.com/Anning01/playlet-clip.git
 cd playlet-clip
 ```
 
@@ -133,7 +133,7 @@ choco install ffmpeg
 #### 3. 克隆并安装依赖
 
 ```bash
-git clone https://github.com/anningforchina/playlet-clip.git
+git clone https://github.com/Anning01/playlet-clip.git
 cd playlet-clip
 
 # 安装项目依赖
@@ -183,6 +183,9 @@ uv run pytest tests/ -v
 4. （可选）调整高级设置
 5. 点击"开始处理"
 6. 等待处理完成后预览和下载
+
+![web-ui.png](docs/web-ui.png)
+
 
 ### 命令行 API
 

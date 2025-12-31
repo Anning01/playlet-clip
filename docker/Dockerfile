@@ -23,24 +23,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install uv
 RUN pip install uv
 
-# Copy project files
-COPY pyproject.toml ./
+# Copy project files (including README.md for hatchling build)
+COPY pyproject.toml README.md ./
 COPY src/ src/
 COPY scripts/ scripts/
 
 # Install dependencies
 RUN uv pip install --system -e .
 
-# Install CosyVoice dependencies
+# Install CosyVoice dependencies - models will be downloaded on first run
 RUN mkdir -p third_party && \
     git clone --recursive https://github.com/FunAudioLLM/CosyVoice.git third_party/CosyVoice && \
     cd third_party/CosyVoice && \
     pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/ && \
-    cd /app
-
-# Download CosyVoice model
-RUN pip install modelscope -i https://mirrors.aliyun.com/pypi/simple/ && \
-    python -c "from modelscope import snapshot_download; snapshot_download('iic/CosyVoice-300M-SFT', local_dir='pretrained_models/CosyVoice-300M-SFT')"
+    pip install modelscope -i https://mirrors.aliyun.com/pypi/simple/
 
 # Create directories
 RUN mkdir -p /app/config /app/data/input /app/data/output /app/data/temp /app/models
