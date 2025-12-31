@@ -1,0 +1,95 @@
+# Playlet-Clip Configuration Example
+# Copy this file to config.yaml and modify as needed
+
+# LLM Configuration (ChatGPT)
+llm:
+  api_key: ""  # Your OpenAI API key, or use OPENAI_API_KEY env var
+  base_url: "https://api.openai.com/v1"  # API endpoint, supports proxies
+  model: "gpt-4o"  # Model name
+  temperature: 0.3  # Lower = more deterministic
+  max_retries: 10  # Max retries for validation failures
+
+# ASR Configuration (FunASR)
+asr:
+  model_name: "iic/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch"
+  vad_model: "iic/speech_fsmn_vad_zh-cn-16k-common-pytorch"
+  punc_model: "iic/punc_ct-transformer_zh-cn-common-vocab272727-pytorch"
+  device: "cuda"  # cuda or cpu
+  batch_size: 1
+
+# TTS Configuration (CosyVoice / edge-tts)
+tts:
+  # Backend selection:
+  # - "auto": Try cosyvoice_api -> cosyvoice_local -> edge_tts (recommended)
+  # - "cosyvoice_api": Use CosyVoice Docker service (需要 GPU Docker)
+  # - "cosyvoice_local": Use local CosyVoice (需要安装 CosyVoice, 运行 scripts/install_cosyvoice.sh)
+  # - "edge_tts": Use Microsoft Edge TTS (无需 GPU，使用云服务)
+  backend: "auto"
+
+  # CosyVoice API settings (for Docker deployment)
+  cosyvoice_api_url: "http://cosyvoice:8080"  # Docker service name
+
+  # CosyVoice local settings
+  # 模型可以是:
+  # - ModelScope ID: "iic/CosyVoice-300M-SFT" (会自动下载)
+  # - 本地路径: "pretrained_models/CosyVoice-300M-SFT"
+  model_name: "pretrained_models/CosyVoice-300M-SFT"
+  device: "cuda"  # cuda or cpu
+
+  # Common settings
+  default_voice: "中文女"  # Available: 中文女, 中文男, 日语男, 粤语女, 英文女, 英文男, 韩语女
+  speed: 1.0  # Speech speed (0.5 - 2.0)
+  sample_rate: 22050
+
+# Video Processing Configuration
+video:
+  blur_height: 185  # Blur region height in pixels
+  blur_y: 1413  # Blur region Y position
+  subtitle_margin: 65  # Subtitle vertical margin
+  blur_sigma: 20  # Gaussian blur sigma
+  video_codec: "libx264"
+  audio_codec: "aac"
+  preset: "fast"  # FFmpeg encoding preset
+
+  # Audio mixing settings (解说片段会混合原声和解说音频)
+  original_volume: 0.3  # 解说时原声音量 (0.0-1.0)，降低原声避免干扰
+  narration_volume: 1.0  # 解说音量 (0.0-2.0)
+
+# Path Configuration
+paths:
+  base_dir: "."
+  input_dir: "data/input"
+  output_dir: "data/output"
+  temp_dir: "data/temp"
+  models_dir: "models"
+  config_dir: "config"
+
+# Narration Styles
+# 每个风格可以有自定义的 prompt_template，如果不设置则使用 config/prompts/narrator.txt
+styles:
+  - name: "讽刺风格"
+    description: "通过讽刺和夸张的手法来评论剧中的不合理或过于狗血的情节，让观众在笑声中进行思考。"
+    # prompt_template: "自定义 prompt 模板，可选"
+
+  - name: "温情风格"
+    description: "以温和、感性的语气解读剧情，引发观众共鸣。"
+
+  - name: "悬疑风格"
+    description: "以悬疑、紧张的语气解读剧情，制造悬念感。"
+
+  - name: "吐槽风格"
+    description: "以轻松幽默的方式吐槽剧情中的槽点，娱乐性强。"
+
+  - name: "专业风格"
+    description: "以专业、客观的角度分析剧情，深入解读角色动机和剧情发展。"
+
+# 默认 Prompt 模板位置: config/prompts/narrator.txt
+# 可以修改该文件来自定义默认的解说生成提示词
+
+# UI Configuration
+ui_host: "0.0.0.0"
+ui_port: 7860
+ui_share: false  # Enable Gradio share link
+
+# Debug Mode
+debug: false

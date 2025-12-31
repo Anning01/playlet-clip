@@ -1,0 +1,84 @@
+services:
+  # Main application
+  playlet-clip:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: playlet-clip:latest
+    container_name: playlet-clip
+    ports:
+      - "7860:7860"
+    volumes:
+      # Configuration
+      - ../config:/app/config:ro
+      # Data directories
+      - ../data/input:/app/data/input
+      - ../data/output:/app/data/output
+      # Model cache (persistent)
+      - playlet-models:/app/models
+      # Huggingface cache
+      - hf-cache:/root/.cache/huggingface
+    environment:
+      # OpenAI API configuration
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      # TTS configuration - use CosyVoice API
+      - TTS_BACKEND=${TTS_BACKEND:-auto}
+      - TTS_COSYVOICE_API_URL=http://cosyvoice:8080
+      # Application settings
+      - PLAYLET__DEBUG=${DEBUG:-false}
+      - PLAYLET__UI_SHARE=${UI_SHARE:-false}
+    depends_on:
+      cosyvoice:
+        condition: service_healthy
+        required: false
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # CosyVoice TTS Service (Optional - for high quality voice)
+  cosyvoice:
+    image: lucferreira/cosyvoice:latest
+    container_name: cosyvoice
+    ports:
+      - "8080:8080"
+    volumes:
+      # Model cache (persistent)
+      - cosyvoice-models:/app/pretrained_models
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s  # CosyVoice needs time to load models
+    restart: unless-stopped
+    profiles:
+      - cosyvoice  # Only start with: docker compose --profile cosyvoice up
+
+volumes:
+  playlet-models:
+    name: playlet-clip-models
+  hf-cache:
+    name: playlet-clip-hf-cache
+  cosyvoice-models:
+    name: cosyvoice-models

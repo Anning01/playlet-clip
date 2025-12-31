@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv sync:*)",
+      "Bash(uv pip:*)",
+      "Bash(curl:*)",
+      "Bash(ping:*)",
+      "Bash(UV_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/ uv sync:*)",
+      "Bash(uv run python:*)",
+      "Bash(uv run ruff:*)",
+      "Bash(chmod:*)",
+      "Bash(uv run pytest:*)"
+    ]
+  }
+}

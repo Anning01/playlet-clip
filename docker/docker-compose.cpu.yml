@@ -1,0 +1,45 @@
+version: '3.8'
+
+# CPU-only version for systems without NVIDIA GPU
+
+services:
+  playlet-clip:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.cpu
+    image: playlet-clip:cpu
+    container_name: playlet-clip
+    ports:
+      - "7860:7860"
+    volumes:
+      # Configuration
+      - ../config:/app/config:ro
+      # Data directories
+      - ../data/input:/app/data/input
+      - ../data/output:/app/data/output
+      # Model cache (persistent)
+      - playlet-models:/app/models
+      # Huggingface cache
+      - hf-cache:/root/.cache/huggingface
+    environment:
+      # OpenAI API configuration
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      # Force CPU mode
+      - PLAYLET__ASR__DEVICE=cpu
+      - PLAYLET__TTS__DEVICE=cpu
+      # Application settings
+      - PLAYLET__DEBUG=${DEBUG:-false}
+      - PLAYLET__UI_SHARE=${UI_SHARE:-false}
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  playlet-models:
+    name: playlet-clip-models
+  hf-cache:
+    name: playlet-clip-hf-cache
