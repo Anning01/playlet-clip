@@ -194,11 +194,12 @@ class FFmpegWrapper:
         # Build filter complex:
         # 1. Video: blur effect + subtitles
         # 2. Audio: mix original (reduced volume) + narration
+        # Note: Using Noto Sans CJK SC font for Chinese character support
         filter_complex = (
             # Video processing
             f"[0:v]crop=iw:{blur_height}:0:{blur_y},gblur=sigma={blur_sigma}[blur];"
             f"[0:v][blur]overlay=0:{blur_y},"
-            f"subtitles='{subtitle_path_escaped}':force_style='MarginV={subtitle_margin}'[vout];"
+            f"subtitles='{subtitle_path_escaped}':force_style='FontName=Noto Sans CJK SC,MarginV={subtitle_margin}'[vout];"
             # Audio processing: adjust volumes and mix
             f"[0:a]volume={original_volume}[a0];"
             f"[1:a]volume={narration_volume}[a1];"
