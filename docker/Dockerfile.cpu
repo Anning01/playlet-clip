@@ -11,13 +11,16 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 
-# Install system dependencies
+# Install system dependencies and Chinese fonts
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     git \
     curl \
     sox \
     libsox-dev \
+    fonts-noto-cjk \
+    fontconfig \
+    && fc-cache -fv \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv
