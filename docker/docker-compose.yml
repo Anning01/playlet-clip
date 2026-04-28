@@ -25,6 +25,9 @@ services:
       # TTS configuration - use CosyVoice API
       - TTS_BACKEND=${TTS_BACKEND:-auto}
       - TTS_COSYVOICE_API_URL=http://cosyvoice:8080
+      # GPU deployment
+      - PLAYLET__ASR__DEVICE=${ASR_DEVICE:-cuda}
+      - MODELSCOPE_CACHE=/app/models/modelscope
       # Application settings
       - PLAYLET__DEBUG=${DEBUG:-false}
       - PLAYLET__UI_SHARE=${UI_SHARE:-false}

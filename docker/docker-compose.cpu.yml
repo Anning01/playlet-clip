@@ -24,6 +24,7 @@ services:
       # Force CPU mode
       - PLAYLET__ASR__DEVICE=cpu
       - PLAYLET__TTS__DEVICE=cpu
+      - MODELSCOPE_CACHE=/app/models/modelscope
       # Application settings
       - PLAYLET__DEBUG=${DEBUG:-false}
       - PLAYLET__UI_SHARE=${UI_SHARE:-false}
