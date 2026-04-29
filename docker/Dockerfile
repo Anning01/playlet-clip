@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:2.3.1-cuda12.1-cudnn8-runtime
+FROM pytorch/pytorch:2.7.1-cuda12.8-cudnn9-runtime
 
 LABEL maintainer="anning <anningforchina@gmail.com>"
 LABEL description="Playlet-Clip: AI-powered short drama auto-editing tool"
@@ -47,7 +47,10 @@ EXPOSE 7860
 # To use CosyVoice, set PLAYLET__TTS__BACKEND=cosyvoice_local and mount the model
 ENV PLAYLET__UI_HOST=0.0.0.0 \
     PLAYLET__UI_PORT=7860 \
+    PLAYLET__ASR__DEVICE=cuda \
     PLAYLET__TTS__BACKEND=edge_tts \
+    NVIDIA_VISIBLE_DEVICES=all \
+    NVIDIA_DRIVER_CAPABILITIES=compute,utility \
     PLAYLET__PATHS__INPUT_DIR=/app/data/input \
     PLAYLET__PATHS__OUTPUT_DIR=/app/data/output \
     PLAYLET__PATHS__TEMP_DIR=/app/data/temp \

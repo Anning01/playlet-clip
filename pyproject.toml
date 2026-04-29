@@ -20,8 +20,8 @@ dependencies = [
     "modelscope>=1.10",
 
     # TTS - CosyVoice dependencies (optional, install from source)
-    "torch>=2.0",
-    "torchaudio>=2.0",
+    "torch>=2.4",
+    "torchaudio>=2.4",
     "transformers>=4.35",
     "onnxruntime>=1.16",
 
